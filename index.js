@@ -2,6 +2,7 @@ const pokeLista = document.querySelector(".poke-list");
 const pokeDetalles = document.querySelector(".poke-details");
 let currentPage = 1;
 const pokemonsPerPage = 20;
+let listaCompleta = [];
 
 async function pedirPokemonData(pokemonName) {
   try {
@@ -30,7 +31,6 @@ function mostrarDetallesPokemon(pokemon) {
       .join(", ")}</p>
   `;
 }
-let listaCompleta = []; 
 
 async function obtenerListaCompletaPokemon() {
   try {
@@ -39,8 +39,6 @@ async function obtenerListaCompletaPokemon() {
     );
     const data = await response.json();
     listaCompleta = data.results;
-
-    mostrarListaPokemon();
   } catch (error) {
     console.error("Error al obtener los datos:", error);
   }
@@ -86,5 +84,6 @@ function irAPaginaSiguiente() {
   mostrarListaPokemon();
 }
 
-
-obtenerListaCompletaPokemon();
+document.addEventListener("DOMContentLoaded", () => {
+  obtenerListaCompletaPokemon().then(() => mostrarListaPokemon());
+});

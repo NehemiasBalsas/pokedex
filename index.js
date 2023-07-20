@@ -18,8 +18,8 @@ async function pedirPokemonData(pokemonName) {
 
 function mostrarDetallesPokemon(pokemon) {
   pokeDetalles.innerHTML = `
-    <h2>${pokemon.name}</h2>
-    <p>Número de Pokédex: ${pokemon.id}</p>
+    <h2 class="nameCard nam">${pokemon.name}</h2>
+    <p class="nameCard num">Número de Pokédex:#${pokemon.id}</p>
     <img class="poke-image" src="${pokemon.sprites.front_default}" alt="${
     pokemon.name
   }">
@@ -56,7 +56,7 @@ async function mostrarListaPokemon() {
       const pokeCard = document.createElement("div");
       pokeCard.className = "poke-card";
       pokeCard.innerHTML = `
-        <p>${pokemon.name}</p>
+        <p class="namePoke">${pokemon.name}</p>
         <img class="poke-image" src="${
           pokemonData.sprites.front_default
         }" alt="${pokemon.name}">
@@ -69,6 +69,29 @@ async function mostrarListaPokemon() {
     }
   } catch (error) {
     console.error("Error al obtener los datos:", error);
+  }
+}
+
+async function buscarPokemon() {
+  const searchInput = document
+    .getElementById("searchInput")
+    .value.toLowerCase();
+  const foundPokemon = listaCompleta.find(
+    (pokemon) =>
+      pokemon.name.toLowerCase() === searchInput ||
+      String(listaCompleta.indexOf(pokemon) + 1) === searchInput
+  );
+
+  if (foundPokemon) {
+    const pokemonData = await pedirPokemonData(foundPokemon.name);
+    mostrarDetallesPokemon(pokemonData);
+    currentPage = Math.ceil(
+      (listaCompleta.indexOf(foundPokemon) + 1) / pokemonsPerPage
+    );
+    mostrarListaPokemon();
+  } else {
+    pokeDetalles.innerHTML =
+      "<p>No se encontró ningún Pokémon con ese nombre o número de Pokédex.</p>";
   }
 }
 

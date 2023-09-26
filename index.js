@@ -3,6 +3,7 @@ const pokeDetalles = document.querySelector(".poke-details");
 let currentPage = 1;
 const pokemonsPerPage = 20;
 let listaCompleta = [];
+let listaActual = [];
 
 async function pedirPokemonData(pokemonName) {
   try {
@@ -30,6 +31,10 @@ function mostrarDetallesPokemon(pokemon) {
       .map((ability) => ability.ability.name)
       .join(", ")}</p>
   `;
+
+  const detallesPokemon = document.getElementById("poke-details");
+
+  detallesPokemon.scrollIntoView({ behavior: "smooth" });
 }
 
 async function obtenerListaCompletaPokemon() {
@@ -44,11 +49,15 @@ async function obtenerListaCompletaPokemon() {
   }
 }
 
+function actualizarListaActual() {
+  const IdxInicial = (currentPage - 1) * pokemonsPerPage;
+  const IdxFinal = IdxInicial + pokemonsPerPage;
+  listaActual = listaCompleta.slice(IdxInicial, IdxFinal);
+}
+
 async function mostrarListaPokemon() {
   try {
-    const IdxInicial = (currentPage - 1) * pokemonsPerPage;
-    const IdxFinal = IdxInicial + pokemonsPerPage;
-    const listaActual = listaCompleta.slice(IdxInicial, IdxFinal);
+    actualizarListaActual();
 
     pokeLista.innerHTML = "";
     for (const pokemon of listaActual) {
@@ -83,11 +92,18 @@ async function buscarPokemon() {
   );
 
   if (foundPokemon) {
+    const pageIndex = Math.floor(
+      listaCompleta.indexOf(foundPokemon) / pokemonsPerPage
+    );
+
+    currentPage = pageIndex + 1;
+    const positionInPage =
+      listaCompleta.indexOf(foundPokemon) % pokemonsPerPage;
+    listaActual.unshift(foundPokemon);
+    listaActual.splice(positionInPage, 0, listaActual.pop());
+
     const pokemonData = await pedirPokemonData(foundPokemon.name);
     mostrarDetallesPokemon(pokemonData);
-    currentPage = Math.ceil(
-      (listaCompleta.indexOf(foundPokemon) + 1) / pokemonsPerPage
-    );
     mostrarListaPokemon();
   } else {
     pokeDetalles.innerHTML =
@@ -95,16 +111,25 @@ async function buscarPokemon() {
   }
 }
 
+function scrollToTop() {
+  window.scrollTo({
+    top: 0,
+    behavior: "smooth",
+  });
+}
+
 function irAPaginaAnterior() {
   if (currentPage > 1) {
     currentPage--;
     mostrarListaPokemon();
+    scrollToTop();
   }
 }
 
 function irAPaginaSiguiente() {
   currentPage++;
   mostrarListaPokemon();
+  scrollToTop();
 }
 
 document.addEventListener("DOMContentLoaded", () => {

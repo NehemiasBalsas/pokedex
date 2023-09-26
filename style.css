@@ -156,3 +156,13 @@ h1 {
     background-color: #ff4141;
     animation: pulse 1s infinite;
 }
+.mensaje{
+    position: absolute;
+    font-size: 0.8rem;
+    background-color: #fff;
+    padding: 0.3rem;
+    top: 1.5rem;
+    left: 3rem;
+    border: solid 2px rgb(255, 0, 0);
+    border-radius: 5%;
+}
